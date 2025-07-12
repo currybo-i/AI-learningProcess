@@ -49,3 +49,14 @@ Matrix Matrix::dot(const Matrix& other) const
     }
     return result;
 }
+
+void Matrix::init(int r, int c) 
+{
+    rows = r;
+    cols = c;
+    data.resize(rows);
+    for (auto& row : data) {
+        row.resize(cols, 0.0f);
+    }
+    fill(0.0f);
+}
