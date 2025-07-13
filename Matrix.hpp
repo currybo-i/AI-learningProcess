@@ -7,8 +7,8 @@ class Matrix {
     private:
         int rows;
         int cols;
-        vector<vector<float>> data;
     public:
+        vector<vector<float>> data;
         Matrix(int r, int c);
         void write(int x, int y, float Value);
         void fill(float Value); 
