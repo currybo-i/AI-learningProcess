@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include "Matrix.hpp"
 
 using namespace std;
 
@@ -11,15 +12,20 @@ class Network
         int _numIneurons;
         int _numOneurons;
 
-        vector<float> HHweights; // it will store every hh weights, that means even if there are multiple hh layer connections
-        vector<float> IHweights;
-        vector<float> HOweights;
+        Matrix HHweights; // it will store every hh weights, that means even if there are multiple hh layer connections
+        Matrix IHweights;
+        Matrix HOweights;
+
+        vector<float> Ilayer;
+        vector<vector<float>> Hlayers;
+        vector<float> Olayer;
     public:
         Network(int numHlayers, int numHneurons, int numIneurons, int numOneurons);
 
         void init();
-        void save() const;
-        void load();
+        void save(string savePath) const;
+        void load(string loadPath);
+        auto forwardpass(vector<float> input) const;
         void print() const;
 
         int getNumHiddenLayers() const { return _numHlayers; }
