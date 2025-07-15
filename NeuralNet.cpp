@@ -1,11 +1,11 @@
-#include "Network.hpp"
+#include "NeuralNet.hpp"
 #include <random>
 #include "Matrix.hpp"
 #include <fstream>
 #include <cmath>
 #include <algorithm>
 
-Network::Network(int numHlayers, int numHneurons, int numIneurons, int numOneurons) :
+NeuralNet::NeuralNet(int numHlayers, int numHneurons, int numIneurons, int numOneurons) :
     _numHlayers(numHlayers),
     _numHneurons(numHneurons),
     _numIneurons(numIneurons),
@@ -15,7 +15,8 @@ Network::Network(int numHlayers, int numHneurons, int numIneurons, int numOneuro
     HOweights(numHneurons, numOneurons)
 {}
 
-void Network::init() {
+void NeuralNet::init() {
+    //Intialises every weights to some randomvalue between -1000 and 1000
     mt19937 gen(random_device{}());
     uniform_real_distribution<> dis(-1000, 1000);
     int rc = 0;
@@ -53,7 +54,9 @@ void Network::init() {
     }
 }
 
-void Network::save(string savePath) const {
+void NeuralNet::save(string savePath) const {
+    //saves the current weights ; if the savePath doesn't contain the file, it will create one at that position
+
     ofstream file(savePath);
 
     if (!file.is_open())
@@ -88,7 +91,9 @@ void Network::save(string savePath) const {
     file.close();
 }
 
-void Network::load(string loadPath) {
+void NeuralNet::load(string loadPath) {
+    //loads weight from the given loadPath
+
     ifstream file(loadPath);
     
     if (!file.is_open()) {
@@ -125,6 +130,8 @@ void Network::load(string loadPath) {
 }
 
 vector<float> softmax (vector<float> x) {
+    //seriously have no idea what it does, but it seems a lot of ppl are telling me to use this, so
+
     float max_x = *max_element(x.begin(), x.end());
     float sum = 0.0f;
     vector<float> result(x.size());
@@ -138,11 +145,16 @@ vector<float> softmax (vector<float> x) {
     return result;
 }
 
-vector<float> Network::forwardpass(vector<float> input) {
+vector<float> NeuralNet::forwardpass(vector<float> input) {
+    /*This is the part where with the given input it generates a probablity of
+    different Outputs in a vector type, on the basis of the accuracy of the 
+    weights and how much the NeuralNet has been trained on it*/
+
     if (input.size() != _numIneurons) {
         cerr << "Input size does not match number of input neurons" << endl;
         return {};
     }
+
     Matrix IHMatrix(1, _numIneurons);
     for (int i = 0; i < _numIneurons; ++i)
         IHMatrix.write(0, i, input[i]);
@@ -167,12 +179,15 @@ vector<float> Network::forwardpass(vector<float> input) {
         for (int j = 0; j < _numHneurons; ++j)
             Hlayers[i].push_back(HHMatrix.getData()[0][j]);
     }
+
     Matrix lastH(1, _numHneurons);
     for (int i = 0; i < _numHneurons; ++i)
         lastH.write(0, i, Hlayers[_numHlayers - 1][i]);
+    
     Matrix OMatrix = lastH.dot(HOweights);
     vector<float> raw = OMatrix.getData()[0];
     Olayer = softmax(raw);
+    
     return Olayer;
 }
 

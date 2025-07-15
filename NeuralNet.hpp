@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class Network 
+class NeuralNet 
 {
     private:
         int _numHlayers;
@@ -20,7 +20,7 @@ class Network
         vector<vector<float>> Hlayers;
         vector<float> Olayer;
     public:
-        Network(int numHlayers, int numHneurons, int numIneurons, int numOneurons);
+        NeuralNet(int numHlayers, int numHneurons, int numIneurons, int numOneurons);
 
         void init();
         void save(string savePath) const;
