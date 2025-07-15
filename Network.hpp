@@ -25,7 +25,7 @@ class Network
         void init();
         void save(string savePath) const;
         void load(string loadPath);
-        auto forwardpass(vector<float> input);
+        vector<float> forwardpass(vector<float> input);
         void print() const;
 
         int getNumHiddenLayers() const { return _numHlayers; }
