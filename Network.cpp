@@ -3,6 +3,7 @@
 #include "Matrix.hpp"
 #include <fstream>
 #include <cmath>
+#include <algorithm>
 
 Network::Network(int numHlayers, int numHneurons, int numIneurons, int numOneurons) :
     _numHlayers(numHlayers),
@@ -14,9 +15,8 @@ Network::Network(int numHlayers, int numHneurons, int numIneurons, int numOneuro
     HOweights(numHneurons, numOneurons)
 {}
 
-void Network::init()
-{
-    mt19937 gen(std::random_device{}());
+void Network::init() {
+    mt19937 gen(random_device{}());
     uniform_real_distribution<> dis(-1000, 1000);
     int rc = 0;
     for (auto& r : IHweights.getData())
@@ -53,8 +53,7 @@ void Network::init()
     }
 }
 
-void Network::save(string savePath) const
-{
+void Network::save(string savePath) const {
     ofstream file(savePath);
 
     if (!file.is_open())
@@ -89,8 +88,7 @@ void Network::save(string savePath) const
     file.close();
 }
 
-void Network::load(string loadPath)
-{
+void Network::load(string loadPath) {
     ifstream file(loadPath);
     
     if (!file.is_open())
@@ -133,13 +131,38 @@ void Network::load(string loadPath)
     file.close();
 }
 
-auto Network::forwardpass(vector<float> input) const
-{
+vector<float> softmax (vector<float> x) {
+    float max_x = *max_element(x.begin(), x.end());
+    float sum = 0.0f;
+    vector<float> result(x.size());
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] = exp(x[i] - max_x);
+        sum += result[i];
+    }
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] /= sum;
+    }
+    return result;
+}
+
+auto Network::forwardpass(vector<float> input) {
     if (input.size() != _numIneurons)
     {
         cerr << "Input size does not match number of input neurons" << endl;
         return;
     }
 
-    for (float i = 0, i < )
+    for (int i = 0; i < _numIneurons; ++i)
+    {
+        float s = 0.0f;
+        if (!_numHneurons)
+        {
+            return;
+        }
+        for (int j = 0; j < _numHneurons; ++j)
+        {
+            s += input[j] * IHweights.getData()[i][j];
+        }
+        Hlayers[0][i] = s;
+    }
 }
