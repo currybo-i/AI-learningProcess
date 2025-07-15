@@ -60,3 +60,13 @@ void Matrix::init(int r, int c)
     }
     fill(0.0f);
 }
+
+void Matrix::resize(int r, int c) 
+{
+    rows = r;
+    cols = c;
+    data.resize(rows);
+    for (auto& row : data) {
+        row.resize(cols, 0.0f);
+    }
+}

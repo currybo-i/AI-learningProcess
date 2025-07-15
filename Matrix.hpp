@@ -11,6 +11,7 @@ class Matrix {
     public:
         
         Matrix(int r, int c);
+        void resize(int r, int c);
         void write(int x, int y, float Value);
         void fill(float Value); 
         void print() const;
@@ -18,6 +19,8 @@ class Matrix {
         
         Matrix dot(const Matrix& other) const;
 
-        int getRows() const { return rows; }
-        int getCols() const { return cols; }
+        int getRowsSize() const { return rows; }
+        int getColsSize() const { return cols; }
+        int getSize() const { return rows * cols; }
+        const vector<vector<float>>& getData() const { return data; }
 };
