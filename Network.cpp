@@ -139,43 +139,40 @@ vector<float> softmax (vector<float> x) {
 }
 
 vector<float> Network::forwardpass(vector<float> input) {
-    if (input.size() != _numIneurons)
-    {
+    if (input.size() != _numIneurons) {
         cerr << "Input size does not match number of input neurons" << endl;
-        return;
+        return {};
     }
-    if (_numHneurons == 0) {
-        return;    //I will do this later
-    }
-    else {
-        for (int i = 0; i < _numHlayers; ++i) {
-            float s = 0.0f;
-            for (int j = 0; j < _numHneurons; ++j) {
-                s += input[j] * IHweights.getData()[i][j];
-            }
-            Hlayers[0][i] = s;
-        }
-    }
+    Matrix IHMatrix(1, _numIneurons);
+    for (int i = 0; i < _numIneurons; ++i)
+        IHMatrix.write(0, i, input[i]);
+    Ilayer = input;
 
-    for (int i = 0; i < _numHlayers - 1; ++i) {
-        for (int j = 0; j < _numHneurons; ++j) {
-            float s = 0.0f;
-            for (int k = 0; k < _numHneurons; ++k) {
-                s += Hlayers[i][k] * HHweights.getData()[j][k];
-            }
-            Hlayers[i + 1][j] = s;
+    Matrix HHMatrix(1, _numHneurons);
+    for (int i = 0; i < _numHlayers; ++i) {
+        if (i == 0) {
+            HHMatrix = IHMatrix.dot(IHweights);
+        } else {
+            Matrix prev(1, _numHneurons);
+            for (int j = 0; j < _numHneurons; ++j)
+                prev.write(0, j, Hlayers[i - 1][j]);
+            HHMatrix = prev.dot(HHweights);
         }
-    }
 
-    vector<float> raw;
-    for (int i = 0; i < _numOneurons; ++i) {
-        float s = 0.0f;
-        for (int j = 0; j < _numHneurons; ++j) {
-            s += Hlayers[_numHlayers - 1][j] * HOweights.getData()[i][j];
-        }
-        raw.push_back(s);
+        for (int r = 0; r < HHMatrix.getRowsSize(); ++r)
+            for (int c = 0; c < HHMatrix.getColsSize(); ++c)
+                HHMatrix.write(r, c, max(0.0f, HHMatrix.getData()[r][c]));
+
+        Hlayers[i].clear();
+        for (int j = 0; j < _numHneurons; ++j)
+            Hlayers[i].push_back(HHMatrix.getData()[0][j]);
     }
+    Matrix lastH(1, _numHneurons);
+    for (int i = 0; i < _numHneurons; ++i)
+        lastH.write(0, i, Hlayers[_numHlayers - 1][i]);
+    Matrix OMatrix = lastH.dot(HOweights);
+    vector<float> raw = OMatrix.getData()[0];
     Olayer = softmax(raw);
-    
     return Olayer;
 }
+
