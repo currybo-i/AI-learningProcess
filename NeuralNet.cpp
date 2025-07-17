@@ -155,11 +155,12 @@ vector<float> NeuralNet::forwardpass(vector<float> input) {
         return {};
     }
 
-    Matrix IHMatrix(1, _numIneurons);
+    IHweights.resize(1, _numIneurons);
     for (int i = 0; i < _numIneurons; ++i)
-        IHMatrix.write(0, i, input[i]);
+        IHweights.write(0, i, input[i]);
     Ilayer = input;
 
+    /*
     Matrix HHMatrix(1, _numHneurons);
     for (int i = 0; i < _numHlayers; ++i) {
         if (i == 0) {
@@ -178,16 +179,28 @@ vector<float> NeuralNet::forwardpass(vector<float> input) {
         Hlayers[i].clear();
         for (int j = 0; j < _numHneurons; ++j)
             Hlayers[i].push_back(HHMatrix.getData()[0][j]);
-    }
+    }*/
+    HHweights.resize(_numHlayers -1,_numHneurons);
+    Hlayers = HHMatrix.getData();
+
 
     Matrix lastH(1, _numHneurons);
     for (int i = 0; i < _numHneurons; ++i)
         lastH.write(0, i, Hlayers[_numHlayers - 1][i]);
     
-    Matrix OMatrix = lastH.dot(HOweights);
-    vector<float> raw = OMatrix.getData()[0];
+    HOweights = lastH.dot(HOweights);
+    vector<float> raw = HOweights.getData()[0];
     Olayer = softmax(raw);
     
     return Olayer;
+}
+
+void NeuralNet::BackwardPropagation(vector<float> target, float learningRate) {
+
+    if (target.size() != _numOneurons) {
+        cerr << "Target size Does not match the number of output neurons" << endl;
+    }
+
+
 }
 

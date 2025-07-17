@@ -26,6 +26,7 @@ class NeuralNet
         void save(string savePath) const;
         void load(string loadPath);
         vector<float> forwardpass(vector<float> input);
+        void BackwardPropagation(vector<float> target, float learningRate);
         void print() const;
 
         int getNumHiddenLayers() const { return _numHlayers; }

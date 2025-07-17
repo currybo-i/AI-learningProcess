@@ -17,7 +17,7 @@ class Matrix {
         void print() const;
         void init(int r, int c);
         
-        Matrix dot(const Matrix& other) const;
+        Matrix dot(Matrix other);
 
         int getRowsSize() const { return rows; }
         int getColsSize() const { return cols; }

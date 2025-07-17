@@ -30,11 +30,11 @@ void Matrix::print() const
     }
 }
 
-Matrix Matrix::dot(const Matrix& other) const 
+Matrix Matrix::dot(Matrix other)
 {
     if (cols != other.rows) {
         cerr << "Matrix dimensions do not match for dot product" << endl;
-        return Matrix(0, 0); // Return an empty matrix
+        return Matrix(0, 0);
     }
     
     Matrix result(rows, other.cols);
