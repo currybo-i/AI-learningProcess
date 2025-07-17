@@ -25,8 +25,12 @@ class NeuralNet
         void init();
         void save(string savePath) const;
         void load(string loadPath);
+<<<<<<< HEAD:NeuralNet.hpp
         vector<float> forwardpass(vector<float> input);
         void BackwardPropagation(vector<float> target, float learningRate);
+=======
+        auto forwardpass(vector<float> input) const;
+>>>>>>> parent of 962da60 (Added SoftMax):Network.hpp
         void print() const;
 
         int getNumHiddenLayers() const { return _numHlayers; }

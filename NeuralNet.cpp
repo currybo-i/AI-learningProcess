@@ -3,7 +3,6 @@
 #include "Matrix.hpp"
 #include <fstream>
 #include <cmath>
-#include <algorithm>
 
 NeuralNet::NeuralNet(int numHlayers, int numHneurons, int numIneurons, int numOneurons) :
     _numHlayers(numHlayers),
@@ -15,9 +14,15 @@ NeuralNet::NeuralNet(int numHlayers, int numHneurons, int numIneurons, int numOn
     HOweights(numHneurons, numOneurons)
 {}
 
+<<<<<<< HEAD:NeuralNet.cpp
 void NeuralNet::init() {
     //Intialises every weights to some randomvalue between -1000 and 1000
     mt19937 gen(random_device{}());
+=======
+void Network::init()
+{
+    mt19937 gen(std::random_device{}());
+>>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
     uniform_real_distribution<> dis(-1000, 1000);
     int rc = 0;
     for (auto& r : IHweights.getData())
@@ -54,9 +59,14 @@ void NeuralNet::init() {
     }
 }
 
+<<<<<<< HEAD:NeuralNet.cpp
 void NeuralNet::save(string savePath) const {
     //saves the current weights ; if the savePath doesn't contain the file, it will create one at that position
 
+=======
+void Network::save(string savePath) const
+{
+>>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
     ofstream file(savePath);
 
     if (!file.is_open())
@@ -91,9 +101,14 @@ void NeuralNet::save(string savePath) const {
     file.close();
 }
 
+<<<<<<< HEAD:NeuralNet.cpp
 void NeuralNet::load(string loadPath) {
     //loads weight from the given loadPath
 
+=======
+void Network::load(string loadPath)
+{
+>>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
     ifstream file(loadPath);
     
     if (!file.is_open()) {
@@ -129,6 +144,7 @@ void NeuralNet::load(string loadPath) {
     file.close();
 }
 
+<<<<<<< HEAD:NeuralNet.cpp
 vector<float> softmax (vector<float> x) {
     //seriously have no idea what it does, but it seems a lot of ppl are telling me to use this, so
 
@@ -151,10 +167,17 @@ vector<float> NeuralNet::forwardpass(vector<float> input) {
     weights and how much the NeuralNet has been trained on it*/
 
     if (input.size() != _numIneurons) {
+=======
+auto Network::forwardpass(vector<float> input) const
+{
+    if (input.size() != _numIneurons)
+    {
+>>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
         cerr << "Input size does not match number of input neurons" << endl;
         return {};
     }
 
+<<<<<<< HEAD:NeuralNet.cpp
     IHweights.resize(1, _numIneurons);
     for (int i = 0; i < _numIneurons; ++i)
         IHweights.write(0, i, input[i]);
@@ -193,6 +216,9 @@ vector<float> NeuralNet::forwardpass(vector<float> input) {
     Olayer = softmax(raw);
     
     return Olayer;
+=======
+    for (float i = 0, i < )
+>>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
 }
 
 void NeuralNet::BackwardPropagation(vector<float> target, float learningRate) {
