@@ -3,6 +3,7 @@
 #include "Matrix.hpp"
 #include <fstream>
 #include <cmath>
+#include <algorithm>
 
 NeuralNet::NeuralNet(int numHlayers, int numHneurons, int numIneurons, int numOneurons) :
     _numHlayers(numHlayers),
@@ -10,63 +11,35 @@ NeuralNet::NeuralNet(int numHlayers, int numHneurons, int numIneurons, int numOn
     _numIneurons(numIneurons),
     _numOneurons(numOneurons),
     IHweights(numIneurons, numHneurons),
-    HHweights(numHneurons, static_cast<int>(pow(numHneurons, numHlayers - 1))),
     HOweights(numHneurons, numOneurons)
 {}
 
-<<<<<<< HEAD:NeuralNet.cpp
 void NeuralNet::init() {
-    //Intialises every weights to some randomvalue between -1000 and 1000
     mt19937 gen(random_device{}());
-=======
-void Network::init()
-{
-    mt19937 gen(std::random_device{}());
->>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
     uniform_real_distribution<> dis(-1000, 1000);
-    int rc = 0;
-    for (auto& r : IHweights.getData())
-    {
-        int cc = 0;
-        for (const float& w : r)
-        {
-            IHweights.write(rc, cc, dis(gen));
-            cc++;
+
+    for (int r = 0; r < IHweights.getRowsSize(); ++r) {
+        for (int c = 0; c < IHweights.getColsSize(); ++c) {
+            IHweights.write(r, c, dis(gen));
         }
-        rc++;
     }
-    rc = 0;
-    for (auto& r : HHweights.getData())
-    {
-        int cc = 0;
-        for (const float& w : r)
-        {
-            HHweights.write(rc, cc, dis(gen));
-            cc++;
+
+    for (Matrix& hh_mat : HHweights) {
+        for (int r = 0; r < hh_mat.getRowsSize(); ++r) {
+            for (int c = 0; c < hh_mat.getColsSize(); ++c) {
+                hh_mat.write(r, c, dis(gen));
+            }
         }
-        rc++;
     }
-    rc = 0;
-    for (auto& r : HOweights.getData())
-    {
-        int cc = 0;
-        for (const float& w : r)
-        {
-            HOweights.write(rc, cc, dis(gen));
-            cc++;
+
+    for (int r = 0; r < HOweights.getRowsSize(); ++r) {
+        for (int c = 0; c < HOweights.getColsSize(); ++c) {
+            HOweights.write(r, c, dis(gen));
         }
-        rc++;
     }
 }
 
-<<<<<<< HEAD:NeuralNet.cpp
 void NeuralNet::save(string savePath) const {
-    //saves the current weights ; if the savePath doesn't contain the file, it will create one at that position
-
-=======
-void Network::save(string savePath) const
-{
->>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
     ofstream file(savePath);
 
     if (!file.is_open())
@@ -74,80 +47,71 @@ void Network::save(string savePath) const
         cerr << "Didn't open";
         return;
     }
-    for (const auto& r : IHweights.getData())
-    {
-        for (const float& w : r)
-        {
-            file << w << " ";
+
+    for (int r = 0; r < IHweights.getRowsSize(); ++r) {
+        for (int c = 0; c < IHweights.getColsSize(); ++c) {
+            file << IHweights.read(r, c) << " ";
+        }
+        file << endl; 
+    }
+
+    for (const Matrix& hh_mat : HHweights) {
+        for (int r = 0; r < hh_mat.getRowsSize(); ++r) {
+            for (int c = 0; c < hh_mat.getColsSize(); ++c) {
+                file << hh_mat.read(r, c) << " ";
+            }
+            file << endl;
+        }
+    }
+
+    for (int r = 0; r < HOweights.getRowsSize(); ++r) {
+        for (int c = 0; c < HOweights.getColsSize(); ++c) {
+            file << HOweights.read(r, c) << " ";
         }
         file << endl;
     }
-    for (const auto& r : HHweights.getData())
-    {        
-        for (const float& w : r)
-        {            
-            file << w << " ";
-        }
-        file << endl;
-    }
-    for (const auto& r : HOweights.getData())
-    {
-        for (const float& w : r)
-        {
-            file << w << " ";
-        }
-        file << endl;
-    }
+
     file.close();
 }
 
-<<<<<<< HEAD:NeuralNet.cpp
 void NeuralNet::load(string loadPath) {
-    //loads weight from the given loadPath
-
-=======
-void Network::load(string loadPath)
-{
->>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
     ifstream file(loadPath);
     
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         cerr << "Didn't open";
     }
-    int rc = 0;
-    for (auto& r : IHweights.getData()) {
-        int cc = 0;
-        for (const float& w : r) {
-            IHweights.write(rc, cc, 0.0f);
-            cc++;
+
+    float val;
+    string curLine;
+    for (int r = 0; r < IHweights.getRowsSize(); ++r) {
+        getline(file, curLine);
+        for (int c = 0; c < IHweights.getColsSize(); ++c) {
+            val = curLine[2*r];
+            IHweights.write(r, c, val);
         }
-        rc++;
     }
-    rc = 0;
-    for (auto& r : HHweights.getData()) {
-        int cc = 0;
-        for (const float& w : r) {
-            HHweights.write(rc, cc, 0.0f);
-            cc++;
+
+    for (Matrix& hh_mat : HHweights) {
+        for (int r = 0; r < hh_mat.getRowsSize(); ++r) {
+            getline(file, curLine);
+            for (int c = 0; c < hh_mat.getColsSize(); ++c) {
+                val = curLine[2*r];
+                hh_mat.write(r, c, val);
+            }
         }
-        rc++;
     }
-    rc = 0;
-    for (auto& r : HOweights.getData()) {
-        int cc = 0;
-        for (const float& w : r) {
-            HOweights.write(rc, cc, 0.0f);
-            cc++;
+
+    for (int r = 0; r < HOweights.getRowsSize(); ++r) {
+        getline(file, curLine);
+        for (int c = 0; c < HOweights.getColsSize(); ++c) {
+            val = curLine[2*r];
+            HOweights.write(r, c, val);
         }
-        rc++;
     }
-    file.close();
 }
 
-<<<<<<< HEAD:NeuralNet.cpp
 vector<float> softmax (vector<float> x) {
-    //seriously have no idea what it does, but it seems a lot of ppl are telling me to use this, so
-
     float max_x = *max_element(x.begin(), x.end());
     float sum = 0.0f;
     vector<float> result(x.size());
@@ -161,72 +125,43 @@ vector<float> softmax (vector<float> x) {
     return result;
 }
 
-vector<float> NeuralNet::forwardpass(vector<float> input) {
-    /*This is the part where with the given input it generates a probablity of
-    different Outputs in a vector type, on the basis of the accuracy of the 
-    weights and how much the NeuralNet has been trained on it*/
+vector<float> relu(vector<float>& const v) {
+    vector<float> result;
+    for (int i = 0; i < v.size(); ++i)
+        result[i] = max(0.0f, v[i]);
+    return result;
+}
 
-    if (input.size() != _numIneurons) {
-=======
-auto Network::forwardpass(vector<float> input) const
-{
+vector<float> NeuralNet::forwardpass(vector<float> input) {
     if (input.size() != _numIneurons)
     {
->>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
         cerr << "Input size does not match number of input neurons" << endl;
-        return {};
+        return;
     }
 
-<<<<<<< HEAD:NeuralNet.cpp
-    IHweights.resize(1, _numIneurons);
-    for (int i = 0; i < _numIneurons; ++i)
-        IHweights.write(0, i, input[i]);
     Ilayer = input;
+    Matrix inpMat(1,input.size());
+    inpMat.fromVect(input);
 
-    /*
-    Matrix HHMatrix(1, _numHneurons);
-    for (int i = 0; i < _numHlayers; ++i) {
+    for (int i = 0; i < HHweights.size(); ++i) {
         if (i == 0) {
-            HHMatrix = IHMatrix.dot(IHweights);
-        } else {
-            Matrix prev(1, _numHneurons);
-            for (int j = 0; j < _numHneurons; ++j)
-                prev.write(0, j, Hlayers[i - 1][j]);
-            HHMatrix = prev.dot(HHweights);
+            Hlayers[i] = softmax((IHweights.dot(inpMat)).toVect());
         }
+        else if (i != _numHlayers) {
+            Matrix prevMat(1, Hlayers[i-1].size());
+            prevMat = prevMat.fromVect(Hlayers[i-1]);
 
-        for (int r = 0; r < HHMatrix.getRowsSize(); ++r)
-            for (int c = 0; c < HHMatrix.getColsSize(); ++c)
-                HHMatrix.write(r, c, max(0.0f, HHMatrix.getData()[r][c]));
-
-        Hlayers[i].clear();
-        for (int j = 0; j < _numHneurons; ++j)
-            Hlayers[i].push_back(HHMatrix.getData()[0][j]);
-    }*/
-    HHweights.resize(_numHlayers -1,_numHneurons);
-    Hlayers = HHMatrix.getData();
-
-
-    Matrix lastH(1, _numHneurons);
-    for (int i = 0; i < _numHneurons; ++i)
-        lastH.write(0, i, Hlayers[_numHlayers - 1][i]);
-    
-    HOweights = lastH.dot(HOweights);
-    vector<float> raw = HOweights.getData()[0];
-    Olayer = softmax(raw);
-    
-    return Olayer;
-=======
-    for (float i = 0, i < )
->>>>>>> parent of 962da60 (Added SoftMax):Network.cpp
-}
-
-void NeuralNet::BackwardPropagation(vector<float> target, float learningRate) {
-
-    if (target.size() != _numOneurons) {
-        cerr << "Target size Does not match the number of output neurons" << endl;
+            Matrix outMat = HHweights[i].dot(prevMat);
+            vector<float> Hraw = outMat.toVect();
+            Hlayers[i] = relu(Hraw);
+        }
     }
 
+    Matrix finalHidden(1, Hlayers.back().size());
+    finalHidden = finalHidden.fromVect(Hlayers.back());
 
+    Matrix outRaw = HOweights.dot(finalHidden);
+    Olayer = softmax(outRaw.toVect());
+
+    return Olayer;
 }
-

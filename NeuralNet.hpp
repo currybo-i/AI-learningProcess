@@ -12,7 +12,7 @@ class NeuralNet
         int _numIneurons;
         int _numOneurons;
 
-        Matrix HHweights; // it will store every hh weights, that means even if there are multiple hh layer connections
+        vector<Matrix> HHweights; // it will store every hh weights, that means even if there are multiple hh layer connections
         Matrix IHweights;
         Matrix HOweights;
 
@@ -25,12 +25,8 @@ class NeuralNet
         void init();
         void save(string savePath) const;
         void load(string loadPath);
-<<<<<<< HEAD:NeuralNet.hpp
         vector<float> forwardpass(vector<float> input);
-        void BackwardPropagation(vector<float> target, float learningRate);
-=======
-        auto forwardpass(vector<float> input) const;
->>>>>>> parent of 962da60 (Added SoftMax):Network.hpp
+        void BackPropagation(vector<float> target, float learningRate);
         void print() const;
 
         int getNumHiddenLayers() const { return _numHlayers; }
