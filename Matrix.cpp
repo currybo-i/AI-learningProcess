@@ -11,10 +11,10 @@ void Matrix::fill(float Value)
     }
 }
 
-void Matrix::write(int x, int y, float Value) 
+void Matrix::write(int r, int c, float Value) 
 {
-    if (x >= 0 && x < rows && y >= 0 && y < cols) {
-        data[x][y] = Value;
+    if (r >= 0 && r < rows && c >= 0 && c < cols) {
+        data[r][c] = Value;
     } else {
         cerr << "Index out of bounds" << endl;
     }
@@ -69,4 +69,42 @@ void Matrix::resize(int r, int c)
     for (auto& row : data) {
         row.resize(cols, 0.0f);
     }
+}
+
+Matrix Matrix::fromVect(vector<float> vec) {
+    Matrix result(1,vec.size());
+    int cc = 0;
+    for (float& v : vec) {
+        result.write(1, cc, v);
+        ++cc;
+    }
+    return result;
+}
+
+vector<float> Matrix::toVect() {
+    return data[0];
+}
+
+float Matrix::read(int r, int c) const {
+    return data[r][c];
+}
+
+Matrix Matrix::add(const Matrix& other) {
+    Matrix result(rows, cols);
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            result.write(r, c, read(r, c) + other.read(r, c));
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::minus(const Matrix& other) {
+    Matrix result(rows, cols);
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            result.write(r, c, read(r, c) - other.read(r, c));
+        }
+    }
+    return result;
 }
