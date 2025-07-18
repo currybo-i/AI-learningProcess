@@ -108,3 +108,23 @@ Matrix Matrix::minus(const Matrix& other) {
     }
     return result;
 }
+
+Matrix Matrix::transpose() const{
+    Matrix result(cols, rows);
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            result.write(r, c, data[c][r]);
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::scale(float x) const{
+    Matrix result(rows, cols);
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            result.write(r, c, data[c][r]*x);
+        }
+    }
+    return result;
+}
