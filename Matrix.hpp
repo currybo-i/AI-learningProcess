@@ -18,6 +18,8 @@ class Matrix {
         float read(int r, int c) const;
         void init(int r, int c);
         
+        Matrix transpose() const;
+        Matrix scale(float x) const;
         Matrix minus(const Matrix& other);
         Matrix add(const Matrix& other);
         Matrix fromVect(vector<float> vec);
