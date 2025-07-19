@@ -30,7 +30,7 @@ void Matrix::print() const
     }
 }
 
-Matrix Matrix::dot(Matrix other)
+Matrix Matrix::dot(Matrix& other)
 {
     if (cols != other.rows) {
         cerr << "Matrix dimensions do not match for dot product" << endl;
@@ -124,6 +124,16 @@ Matrix Matrix::scale(float x) const{
     for (int r = 0; r < rows; ++r) {
         for (int c = 0; c < cols; ++c) {
             result.write(r, c, data[c][r]*x);
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::product(Matrix& other){
+    Matrix result(rows, other.cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < other.cols; ++j) {
+            result.write(i,j,data[i][j]*other.data[i][j]);
         }
     }
     return result;
