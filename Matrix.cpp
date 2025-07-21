@@ -30,7 +30,7 @@ void Matrix::print() const
     }
 }
 
-Matrix Matrix::dot(Matrix& other)
+Matrix Matrix::dot(Matrix other)
 {
     if (cols != other.rows) {
         cerr << "Matrix dimensions do not match for dot product" << endl;
@@ -82,7 +82,9 @@ Matrix Matrix::fromVect(vector<float> vec) {
 }
 
 vector<float> Matrix::toVect() {
-    return data[0];
+    vector<float> result;
+    result = data[0];
+    return result;
 }
 
 float Matrix::read(int r, int c) const {

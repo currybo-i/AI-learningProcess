@@ -23,7 +23,7 @@ class Matrix {
         Matrix minus(const Matrix& other);
         Matrix add(const Matrix& other);
         Matrix fromVect(vector<float> vec);
-        Matrix dot(Matrix& other);
+        Matrix dot(Matrix other);
         Matrix product(Matrix& other);
 
         vector<float> toVect();
