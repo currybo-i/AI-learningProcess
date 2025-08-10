@@ -165,3 +165,92 @@ vector<float> NeuralNet::forwardpass(vector<float> input) {
 
     return Olayer;
 }
+
+void NeuralNet::BackPropagation(const vector<float> t, float lr) {
+    if (t.size() != Olayer.size()) {
+        cerr << "Target size does not match output layer size" << endl;
+        return;
+    }
+
+    // error = (dL/dz for softmax + cross-entropy)
+    vector<float> output_error(Olayer.size());
+    for (size_t i = 0; i < Olayer.size(); ++i) {
+        output_error[i] = Olayer[i] - t[i];
+    }
+
+    // Update HOweights
+    Matrix finalHidden(1, Hlayers.back().size());
+    finalHidden = finalHidden.fromVect(Hlayers.back());
+    Matrix output_error_mat(1, output_error.size());
+    output_error_mat = output_error_mat.fromVect(output_error);
+
+    Matrix dHO = finalHidden.transpose().dot(output_error_mat);
+    for (int r = 0; r < HOweights.getRowsSize(); ++r) {
+        for (int c = 0; c < HOweights.getColsSize(); ++c) {
+            float updated = HOweights.read(r, c) - lr * dHO.read(r, c);
+            HOweights.write(r, c, updated);
+        }
+    }
+
+    
+    vector<vector<float>> deltas(_numHlayers);
+    vector<float> next_delta = output_error;
+    for (int l = _numHlayers - 1; l >= 0; --l) {
+        // derivate of activation (ReLU)
+        vector<float> deriv(Hlayers[l].size());
+        for (size_t i = 0; i < Hlayers[l].size(); ++i)
+            deriv[i] = Hlayers[l][i] > 0 ? 1.0f : 0.0f;
+        vector<float> delta(Hlayers[l].size(), 0.0f);
+        if (l == _numHlayers - 1) {
+            // for OH weights
+            for (int i = 0; i < HOweights.getRowsSize(); ++i) {
+                float sum = 0.0f;
+                for (int j = 0; j < HOweights.getColsSize(); ++j)
+                    sum += HOweights.read(i, j) * next_delta[j];
+                delta[i] = sum * deriv[i];
+            }
+        } else {
+            // for HH weights
+            for (int i = 0; i < HHweights[l+1].getRowsSize(); ++i) {
+                float sum = 0.0f;
+                for (int j = 0; j < HHweights[l+1].getColsSize(); ++j)
+                    sum += HHweights[l+1].read(i, j) * next_delta[j];
+                delta[i] = sum * deriv[i];
+            }
+        }
+        deltas[l] = delta;
+        next_delta = delta;
+    }
+
+    // Update HHweights
+    for (int l = 0; l < _numHlayers; ++l) {
+        Matrix prev(1, _numIneurons);
+        if (l == 0) {
+            prev = Matrix(1, Ilayer.size()).fromVect(Ilayer);
+        } else {
+            prev = Matrix(1, Hlayers[l-1].size()).fromVect(Hlayers[l-1]);
+        }
+        Matrix delta_mat(1, deltas[l].size());
+        delta_mat = delta_mat.fromVect(deltas[l]);
+        Matrix dW = prev.transpose().dot(delta_mat);
+        for (int r = 0; r < HHweights[l].getRowsSize(); ++r) {
+            for (int c = 0; c < HHweights[l].getColsSize(); ++c) {
+                float updated = HHweights[l].read(r, c) - lr * dW.read(r, c);
+                HHweights[l].write(r, c, updated);
+            }
+        }
+    }
+
+    // Update IHweights
+    Matrix inputMat(1, Ilayer.size());
+    inputMat = inputMat.fromVect(Ilayer);
+    Matrix delta0_mat(1, deltas[0].size());
+    delta0_mat = delta0_mat.fromVect(deltas[0]);
+    Matrix dIH = inputMat.transpose().dot(delta0_mat);
+    for (int r = 0; r < IHweights.getRowsSize(); ++r) {
+        for (int c = 0; c < IHweights.getColsSize(); ++c) {
+            float updated = IHweights.read(r, c) - lr * dIH.read(r, c);
+            IHweights.write(r, c, updated);
+        }
+    }
+}
